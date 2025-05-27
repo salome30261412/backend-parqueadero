@@ -1,0 +1,77 @@
+package com.parqueadero.backend.controller;
+
+import com.parqueadero.backend.dto.VehiculoDTO;
+import com.parqueadero.backend.service.VehiculoService;
+import com.parqueadero.backend.service.ClienteService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api")
+public class VehiculoController {
+
+    private final VehiculoService vehiculoService;
+    private final ClienteService clienteService;
+
+    @Autowired
+    public VehiculoController(VehiculoService vehiculoService, ClienteService clienteService) {
+        this.vehiculoService = vehiculoService;
+        this.clienteService = clienteService;
+    }
+
+    // ----- Vehículos -----
+    
+    @PostMapping("/vehiculos/ingreso")
+    public ResponseEntity<VehiculoDTO> registrarIngreso(@RequestBody VehiculoDTO dto) {
+        return ResponseEntity.ok(vehiculoService.registrarIngreso(dto));
+    }
+
+    @DeleteMapping("/vehiculos/salida/{placa}")
+    public ResponseEntity<Map<String, Object>> registrarSalida(@PathVariable String placa) {
+        return ResponseEntity.ok(vehiculoService.registrarSalida(placa));
+    }
+
+    @GetMapping("/vehiculos/parqueadero")
+    public ResponseEntity<List<VehiculoDTO>> obtenerVehiculosEnParqueadero() {
+        return ResponseEntity.ok(vehiculoService.obtenerVehiculosEnParqueadero());
+    }
+
+    @GetMapping("/vehiculos/parqueadero/{placa}")
+    public ResponseEntity<VehiculoDTO> buscarVehiculo(@PathVariable String placa) {
+        return ResponseEntity.ok(vehiculoService.buscarVehiculo(placa));
+    }
+
+    @GetMapping("/vehiculos/todos")
+    public ResponseEntity<List<VehiculoDTO>> listarTodosLosVehiculos() {
+        return ResponseEntity.ok(vehiculoService.listarVehiculos());
+    }
+
+    @PostMapping("/vehiculos/generarFactura")
+    public ResponseEntity<String> generarFactura(@RequestBody String placa) {
+        return ResponseEntity.ok(vehiculoService.generarFactura(placa));
+    }
+
+    // ----- Tarifas -----
+
+    @GetMapping("/tarifas")
+    public ResponseEntity<Map<String, Double>> obtenerTarifas() {
+        return ResponseEntity.ok(clienteService.obtenerTarifas());
+    }
+
+    // ----- Clientes con mensualidad -----
+
+    @GetMapping("/clientes/mensualidad")
+    public ResponseEntity<String> obtenerClientesMensualidad() {
+        return ResponseEntity.ok(clienteService.obtenerClientesMensualidad());
+    }
+
+    @PostMapping("/clientes/mensualidad")
+    public ResponseEntity<Void> agregarClienteMensualidad(@RequestBody Map<String, String> clienteInfo) {
+        clienteService.agregarClienteMensualidad(clienteInfo);
+        return ResponseEntity.ok().build();
+    }
+}
