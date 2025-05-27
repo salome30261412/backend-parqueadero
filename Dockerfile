@@ -4,13 +4,16 @@ WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
+# Agregar un paso de depuración para ver los archivos generados
+RUN ls -l /app/target
+
 # Etapa de ejecución
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
-COPY --from=build /app/target/mi-aplicacion.jar app.jar  # Especifica el nombre exacto del archivo JAR generado
 
-# Exponer el puerto que utiliza la aplicación (si es 8080, está bien)
+# Copiar el archivo JAR
+COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 8080
-
-# Comando para ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
